@@ -12,7 +12,6 @@ const CartItem = ({ onContinueShopping }) => {
     let total = 0;
     cart.forEach((item) => {
         const quantity = item.quantity;
-        const cost = item.cost;
         total += parseFloat(item.cost.substring(1)) * quantity;
     });
     return total;
@@ -34,24 +33,28 @@ const CartItem = ({ onContinueShopping }) => {
     if (item.quantity > 1) {
         dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1}));
     } else {
-        dispatch(removeItem(item));
+        // --- START IMPORTANT CHANGE ---
+        dispatch(removeItem(item.name)); // Pass only the item's name (which the reducer expects)
+        // --- END IMPORTANT CHANGE ---
     };
   };
 
   const handleRemove = (item) => {
-    dispatch(removeItem(item));
+    // --- START IMPORTANT CHANGE ---
+    dispatch(removeItem(item.name)); // Pass only the item's name (which the reducer expects)
+    // --- END IMPORTANT CHANGE ---
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
     let totalCost = 0;
-        totalCost += parseFloat(item.cost.substring(1)) * item.quantity;
+    totalCost += parseFloat(item.cost.substring(1)) * item.quantity;
     return totalCost;
   };
 
   return (
     <div className="cart-container">
-      <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
+      <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount().toFixed(2)}</h2>
       <div>
         {cart.map(item => (
           <div className="cart-item" key={item.name}>
@@ -64,7 +67,7 @@ const CartItem = ({ onContinueShopping }) => {
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
               </div>
-              <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
+              <div className="cart-item-total">Total: ${calculateTotalCost(item).toFixed(2)}</div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
             </div>
           </div>
@@ -81,5 +84,3 @@ const CartItem = ({ onContinueShopping }) => {
 };
 
 export default CartItem;
-
-
